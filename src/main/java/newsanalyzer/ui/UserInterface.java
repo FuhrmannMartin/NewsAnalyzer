@@ -4,8 +4,10 @@ package newsanalyzer.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 import newsanalyzer.ctrl.Controller;
+import newsapi.NewsApiException;
 
 public class UserInterface 
 {
@@ -13,30 +15,64 @@ public class UserInterface
 	private Controller ctrl = new Controller();
 
 	public void getDataFromCtrl1(){
-		System.out.println("ABC");
-
-		ctrl.process();
+		try {
+			System.out.println(ctrl.process("Sport"));
+		} catch (NewsApiException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		}
 	}
 
 	public void getDataFromCtrl2(){
+		try {
+			System.out.println(ctrl.process("Wetter"));
+		} catch (NewsApiException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		}
 	}
 
 	public void getDataFromCtrl3(){
-
+		try {
+			System.out.println(ctrl.process("Österreich"));
+		} catch (NewsApiException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		}
 	}
 	
 	public void getDataForCustomInput() {
-		
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("Nach diesem Schlagwort suchen: ");
+		String q = scanner.next();
+		try {
+			System.out.println(ctrl.process(q));
+		} catch (NewsApiException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			//e.printStackTrace();
+		}
 	}
 
 
 	public void start() {
-		Menu<Runnable> menu = new Menu<>("User Interfacx");
+		Menu<Runnable> menu = new Menu<>("User Interface");
 		menu.setTitel("Wählen Sie aus:");
-		menu.insert("a", "Choice ABC", this::getDataFromCtrl1);
-		menu.insert("b", "Choice DEF", this::getDataFromCtrl2);
-		menu.insert("c", "Choice 3", this::getDataFromCtrl3);
-		menu.insert("d", "Choice User Imput:",this::getDataForCustomInput);
+		menu.insert("a", "Sport", this::getDataFromCtrl1);
+		menu.insert("b", "Wetter", this::getDataFromCtrl2);
+		menu.insert("c", "Österreich", this::getDataFromCtrl3);
+		menu.insert("d", "Choice User Input:",this::getDataForCustomInput);
 		menu.insert("q", "Quit", null);
 		Runnable choice;
 		while ((choice = menu.exec()) != null) {
