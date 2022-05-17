@@ -5,25 +5,23 @@ import newsapi.NewsApiBuilder;
 import newsapi.NewsApiException;
 import newsapi.beans.Article;
 import newsapi.beans.NewsReponse;
-import newsapi.enums.Category;
-import newsapi.enums.Country;
 import newsapi.enums.Endpoint;
+import newsreader.downloader.ParallelDownloader;
+import newsreader.downloader.SequentialDownloader;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 public class Controller {
 
 	public static final String APIKEY = "de1bc1c9970a4612aa0eb42e33025408";
 	// public static final String APIKEY = "";
-	public static final String pageSize = "100";
+	public static final String pageSize = "20";
 
-	public String process(String q) throws NewsApiException, IOException {
+	public String process(String q) throws NewsApiException, IOException, InterruptedException, ExecutionException {
 		System.out.println("Start process");
 
 		//TODO implement Error handling
@@ -32,7 +30,7 @@ public class Controller {
 
 		//TODO implement methods for analysis
 
-		StringBuilder sb = new StringBuilder();
+		String sb = "";
 
 		NewsApi newsApi = new NewsApiBuilder()
 				.setApiKey(APIKEY)
@@ -43,14 +41,18 @@ public class Controller {
 
 		List<Article> articles = getData(newsApi);
 
+		/*
 		articles = sortByTitleLength(articles);
 		sb.append("Number of articles found: " + getCount(articles) + System.lineSeparator());
 		sb.append("Most articles published by: " + getDominantProvider(articles) + System.lineSeparator());
 		sb.append("Author with shortest name: " + getShortestAuthorName(articles) + System.lineSeparator());
 		sb.append("Articles sorted by longest name first: " + System.lineSeparator());
 		articles.forEach(article -> sb.append(article.getTitle() + System.lineSeparator()));
+		 */
+
+		downloadLastSearch(articles);
 		System.out.println("End process");
-		return sb.toString();
+		return sb;
 	}
 
 	protected static int getCount(List<Article> articles) {
@@ -107,6 +109,27 @@ public class Controller {
 	public List<Article> getData(NewsApi newsApi) throws NewsApiException, IOException {
 		NewsReponse newsResponse = newsApi.getNews();
 		return newsResponse.getArticles();
+	}
+
+	private static List<String> getURLs(List<Article> articles) {
+		// List<String> urls = articles.stream().map(a -> a.getUrl()).collect(Collectors.toList());
+		return articles.stream().map(Article::getUrl).filter(url -> !url.contains("?")).collect(Collectors.toList());
+	}
+
+	public void downloadLastSearch(List<Article> articles) throws InterruptedException, ExecutionException {
+		SequentialDownloader sequentialDownloader = new SequentialDownloader();
+		long startSequential = System.currentTimeMillis();
+		sequentialDownloader.process(getURLs(articles));
+		long finishSequential = System.currentTimeMillis();
+		long timeElapsedSequential = finishSequential - startSequential;
+		System.out.println("Sequential Execution took " + timeElapsedSequential + "ms");
+
+		ParallelDownloader parallelDownloader = new ParallelDownloader();
+		long startParallel = System.currentTimeMillis();
+		parallelDownloader.process(getURLs(articles));
+		long finishParallel = System.currentTimeMillis();
+		long timeElapsedParallel = finishParallel - startParallel;
+		System.out.println("Parallel Execution took " + timeElapsedParallel + "ms");
 	}
 
 }

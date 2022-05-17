@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 import newsanalyzer.ctrl.Controller;
 import newsapi.NewsApiException;
@@ -23,6 +24,10 @@ public class UserInterface
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			//e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -35,6 +40,10 @@ public class UserInterface
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			//e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -47,6 +56,10 @@ public class UserInterface
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			//e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -62,6 +75,10 @@ public class UserInterface
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			//e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
